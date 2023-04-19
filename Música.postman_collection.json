@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "01befc33-6e78-486e-af3e-424d5b7a923f",
+		"name": "Música",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23157438"
+	},
+	"item": [
+		{
+			"name": "Cria",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Hino Nacional\",\r\n    \"genero\": \"genero\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/musica",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"musica"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Detalhe",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/musica/detalhe?nome=Hino-Nacional",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"musica",
+						"detalhe"
+					],
+					"query": [
+						{
+							"key": "nome",
+							"value": "Hino-Nacional"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edita",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Hino Nacional\",\r\n    \"genero\": \"genero\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/musica",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"musica"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deleta",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/musica?nome=Hino-Nacional",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"musica"
+					],
+					"query": [
+						{
+							"key": "nome",
+							"value": "Hino-Nacional"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
