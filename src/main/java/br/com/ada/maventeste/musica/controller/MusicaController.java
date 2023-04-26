@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/musica")
@@ -17,35 +15,77 @@ public class MusicaController {
 
     private List<MusicaDTO> musicaDTOs = new ArrayList<>();
 
-    @GetMapping("/detalhe")
-        public List<MusicaDTO> lista(@RequestParam String filter) {
+    @GetMapping("/lista")
+    public List<MusicaDTO> lista(@RequestParam String filter) {
+        if (filter != null && !filter.isEmpty()) {
             List<MusicaDTO> listaFiltrada = new ArrayList<>();
-            for (MusicaDTO musicaDTO : musicaDTOs({
-            if (musicaDTO.setNome().contains(filter)){
-                listaFiltrada.add(musicaDTO);
+            for (MusicaDTO musicaDTO : musicaDTOs) {
+                if (musicaDTO.getNome().toLowerCase().contains(filter.toLowerCase())) {
+                    listaFiltrada.add(musicaDTO);
+                }
             }
-}
             return listaFiltrada;
+        }
+        return musicaDTOs;
+    }
+
+    @GetMapping
+    public MusicaDTO detalhe(@RequestParam String nome){
+        return new MusicaDTO()
+                .setNome(nome)
+                .setGenero("trap");
         }
 
     @PostMapping
     public ResponseEntity<ResultadoDTO> criar(@RequestBody MusicaDTO musicaDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ResultadoDTO().setResultado(true).setMensagem("funcionou!"));
-
+        if (musicaDTO.getGenero() == null || musicaDTO.getGenero().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                    new ResultadoDTO()
+                            .setResultado(false)
+                            .setMensagem("Música de gênero " + musicaDTO.getGenero() + " é inválida.")
+            );
+        }
+        if (musicaDTO.getNome() == null || musicaDTO.getNome().isEmpty()) {
+            ResultadoDTO resultadoDTO = new ResultadoDTO()
+                    .setResultado(false)
+                    .setMensagem("Música de nome " + musicaDTO.getNome() + " é inválida.");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(resultadoDTO);
+        }
+        System.out.println("Nome da música: " + musicaDTO.getNome());
+        musicaDTOs.add(musicaDTO);
+        return ResponseEntity.ok(new ResultadoDTO()
+                .setResultado(true)
+                .setMensagem("Música " + musicaDTO.getNome() + " criada com sucesso."));
     }
 
     @PutMapping
-    public ResponseEntity<ResultadoDTO> editar(@RequestBody MusicaDTO musicaDTO) {
-
-        Map<String, String> musicas = new HashMap<>();
-
-        musicas.putAll(dados);
-
-        return "Música " + dados.get("nome") + " editada com sucesso!";
+    public ResultadoDTO editar(@RequestBody MusicaDTO musicaDTO) {
+        return new ResultadoDTO()
+                .setResultado(true)
+                .setMensagem("Música " + musicaDTO.getNome() + " editada com sucesso!");
     }
 
     @DeleteMapping
-    public String deletar(@RequestParam String nome) {
-        return "Música " + nome + " deletada com sucesso!";
+    public ResponseEntity<ResultadoDTO> deletar(@RequestParam String nome) {
+        int removido = 0;
+        for (int i = musicaDTOs.size() - 1; i >= 0; i--){
+            MusicaDTO musicaDTO = musicaDTOs.get(i);
+            if (musicaDTO.getNome().equalsIgnoreCase(nome)){
+                musicaDTOs.remove(i);
+                removido++;
+            }
+        }
+        if (removido == 0){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResultadoDTO()
+                            .setResultado(false)
+                            .setMensagem("Não foi encontrada nenhuma música com este nome.")
+            );
+        }
+        return ResponseEntity.ok(
+                new ResultadoDTO()
+                        .setResultado(true)
+                        .setMensagem(removido + " músicas com o nome " + nome + " foram removidas com sucesso.")
+        );
     }
 }
