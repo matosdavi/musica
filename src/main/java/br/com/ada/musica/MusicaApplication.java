@@ -1,4 +1,4 @@
-package br.com.ada.maventeste.musica;
+package br.com.ada.musica;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package br.com.ada.maventeste.musica.dto;
+package br.com.ada.musica.dto;
 
 public class GeneroDTO {
 

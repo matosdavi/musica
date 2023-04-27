@@ -1,4 +1,4 @@
-package br.com.ada.maventeste.musica;
+package br.com.ada.musica;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

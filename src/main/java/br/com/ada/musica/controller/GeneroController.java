@@ -1,25 +1,32 @@
-package br.com.ada.maventeste.musica.controller;
+package br.com.ada.musica.controller;
 
-import br.com.ada.maventeste.musica.dto.GeneroDTO;
-import br.com.ada.maventeste.musica.dto.ResultadoDTO;
+import br.com.ada.musica.dto.GeneroDTO;
+import br.com.ada.musica.dto.ResultadoDTO;
+import br.com.ada.musica.service.GeneroService;
+import br.com.ada.musica.service.exception.GeneroNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/genero")
 public class GeneroController {
 
-    private List<GeneroDTO> generos = new ArrayList<>();
+    private GeneroService generoService;
+
+    public GeneroController(GeneroService generoService) {
+        this.generoService = generoService;
+    }
 
     @GetMapping("/lista")
     public ResponseEntity<List<GeneroDTO>> lista() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(generos);
+                .body(
+                        generoService.lista()
+                );
     }
 
     @PostMapping
@@ -33,7 +40,7 @@ public class GeneroController {
                                     .setMensagem("O nome é obrigatório.")
                     );
         }
-        generos.add(generoDTO);
+        generoService.criar(generoDTO);
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
@@ -41,23 +48,10 @@ public class GeneroController {
         );
     }
     @PutMapping
-    public ResponseEntity<ResultadoDTO> editar(@RequestParam(name = "nome") String nomeFilter, @RequestBody GeneroDTO generoDTO) {
-        GeneroDTO generoEncontrado = null;
-        for (GeneroDTO generoLista : generos) {
-            if (generoLista.getNome().equalsIgnoreCase(nomeFilter)) {
-                generoEncontrado = generoLista;
-                break;
-            }
-        }
-        if (generoEncontrado == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(
-                            new ResultadoDTO()
-                                    .setResultado(false)
-                                    .setMensagem("O Gênero " + nomeFilter + " não foi encontrado.")
-                    );
-        }
+    public ResponseEntity<ResultadoDTO> editar(
+            @RequestParam(name = "nome") String nomeFilter,
+            @RequestBody GeneroDTO generoDTO
+    ) {
         if (generoDTO.getNome() == null || generoDTO.getNome().isEmpty()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -67,7 +61,17 @@ public class GeneroController {
                                     .setMensagem("O nome é obrigatório.")
                     );
         }
-        generoEncontrado.setNome(generoDTO.getNome());
+        try {
+            generoService.editar(nomeFilter, generoDTO);
+        } catch (GeneroNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(
+                            new ResultadoDTO()
+                                    .setResultado(false)
+                                    .setMensagem(e.getMessage())
+                    );
+        }
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
@@ -76,15 +80,11 @@ public class GeneroController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ResultadoDTO> deletar(@RequestParam(name = "nome") String nomeFilter) {
-        GeneroDTO generoEncontrado = null;
-        for (GeneroDTO generoLista : generos) {
-            if (generoLista.getNome().equalsIgnoreCase(nomeFilter)) {
-                generoEncontrado = generoLista;
-                break;
-            }
-        }
-        if (generoEncontrado == null) {
+    public ResponseEntity<ResultadoDTO> deletar(
+            @RequestParam(name = "nome") String nomeFilter
+    ) {
+        boolean resultado = generoService.deletar(nomeFilter);
+        if (resultado == false) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(
@@ -93,7 +93,6 @@ public class GeneroController {
                                     .setMensagem("O gênero " + nomeFilter + " não foi encontrado.")
                     );
         }
-        generos.remove(generoEncontrado);
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
