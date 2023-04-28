@@ -1,18 +1,35 @@
-<<<<<<< HEAD:src/main/java/br/com/ada/musica/dto/MusicaDTO.java
 package br.com.ada.musica.dto;
-=======
-package br.com.ada.maventeste.musica.dto;
->>>>>>> origin/master:src/main/java/br/com/ada/maventeste/musica/dto/MusicaDTO.java
+
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class MusicaDTO {
 
+    @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP inválido.")
+    private String cep;
+
+    @NotBlank(message = "O nome é obrigatório.")
+    @Length(min = 3, max = 250, message = "O nome da música tem que ter no mínimo 3 caracteres.")
     private String nome;
-<<<<<<< HEAD:src/main/java/br/com/ada/musica/dto/MusicaDTO.java
+
+    @NotBlank(message = "O nome é obrigatório.")
+    @Length(min = 3, max = 250, message = "O nome do artista tem que ter no mínimo 3 caracteres.")
     private String artista;
+
+    @NotNull(message = "O gênero da música é obrigatório.")
     private GeneroDTO genero;
-=======
-    private String genero;
->>>>>>> origin/master:src/main/java/br/com/ada/maventeste/musica/dto/MusicaDTO.java
+
+    public String getCep() {
+        return cep;
+    }
+
+    public MusicaDTO setCep(String cep) {
+        this.cep = cep;
+        return this;
+    }
 
     public String getNome() {
         return nome;
@@ -23,7 +40,6 @@ public class MusicaDTO {
         return this;
     }
 
-<<<<<<< HEAD:src/main/java/br/com/ada/musica/dto/MusicaDTO.java
     public String getArtista() {
         return artista;
     }
@@ -38,13 +54,6 @@ public class MusicaDTO {
     }
 
     public MusicaDTO setGenero(GeneroDTO genero) {
-=======
-    public String getGenero() {
-        return genero;
-    }
-
-    public MusicaDTO setGenero(String genero) {
->>>>>>> origin/master:src/main/java/br/com/ada/maventeste/musica/dto/MusicaDTO.java
         this.genero = genero;
         return this;
     }

@@ -8,11 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/genero")
-public class GeneroController {
+public class GeneroController extends BaseController {
 
     private GeneroService generoService;
 
@@ -20,26 +21,17 @@ public class GeneroController {
         this.generoService = generoService;
     }
 
-    @GetMapping("/lista")
-    public ResponseEntity<List<GeneroDTO>> lista() {
+    @GetMapping("/listar")
+    public ResponseEntity<List<GeneroDTO>> listar() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
-                        generoService.lista()
+                        generoService.listar()
                 );
     }
 
     @PostMapping
-    public ResponseEntity<ResultadoDTO> criar(@RequestBody GeneroDTO generoDTO) {
-        if (generoDTO.getNome() == null || generoDTO.getNome().isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            new ResultadoDTO()
-                                    .setResultado(false)
-                                    .setMensagem("O nome é obrigatório.")
-                    );
-        }
+    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid GeneroDTO generoDTO) {
         generoService.criar(generoDTO);
         return ResponseEntity.ok(
                 new ResultadoDTO()
@@ -47,20 +39,12 @@ public class GeneroController {
                         .setMensagem("O gênero de música foi criado com sucesso.")
         );
     }
+
     @PutMapping
     public ResponseEntity<ResultadoDTO> editar(
             @RequestParam(name = "nome") String nomeFilter,
             @RequestBody GeneroDTO generoDTO
     ) {
-        if (generoDTO.getNome() == null || generoDTO.getNome().isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            new ResultadoDTO()
-                                    .setResultado(false)
-                                    .setMensagem("O nome é obrigatório.")
-                    );
-        }
         try {
             generoService.editar(nomeFilter, generoDTO);
         } catch (GeneroNotFoundException e) {

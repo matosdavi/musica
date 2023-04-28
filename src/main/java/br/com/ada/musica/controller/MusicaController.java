@@ -3,68 +3,42 @@ package br.com.ada.musica.controller;
 import br.com.ada.musica.dto.MusicaDTO;
 import br.com.ada.musica.dto.ResultadoDTO;
 import br.com.ada.musica.service.GeneroService;
+import br.com.ada.musica.service.MusicaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/musica")
-public class MusicaController {
+public class MusicaController extends BaseController {
+
+    @Autowired
+    private MusicaService musicaService;
 
     @Autowired
     private GeneroService generoService;
 
-    private List<MusicaDTO> musicaDTOs = new ArrayList<>();
-
     @GetMapping("/lista")
-    public List<MusicaDTO> lista(@RequestParam String filter) {
-
+    public List<MusicaDTO> listar(@RequestParam String filter) {
         if (filter != null && !filter.isEmpty()) {
-            List<MusicaDTO> listaFiltrada = new ArrayList<>();
-            for (MusicaDTO musicaDTO : musicaDTOs) {
-                if (musicaDTO.getNome().toLowerCase().contains(filter.toLowerCase())) {
-                    listaFiltrada.add(musicaDTO);
-                }
-            }
-            return listaFiltrada;
+            return musicaService.filterByName(filter);
         }
-        return musicaDTOs;
+        return musicaService.listar();
     }
 
     @GetMapping
-    public MusicaDTO detalhe(@RequestParam String nome){
+    public MusicaDTO detalhar(@RequestParam String nome){
         return new MusicaDTO()
                 .setNome(nome)
                 .setArtista("trap");
         }
 
     @PostMapping
-    public ResponseEntity<ResultadoDTO> criar(@RequestBody MusicaDTO musicaDTO) {
-        if (musicaDTO.getArtista() == null || musicaDTO.getArtista().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    new ResultadoDTO()
-                            .setResultado(false)
-                            .setMensagem("Música de artista " + musicaDTO.getArtista() + " é inválida.")
-            );
-        }
-        if (musicaDTO.getNome() == null || musicaDTO.getNome().isEmpty()) {
-            ResultadoDTO resultadoDTO = new ResultadoDTO()
-                    .setResultado(false)
-                    .setMensagem("Música de nome " + musicaDTO.getNome() + " é inválida.");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    resultadoDTO);
-        }
-        if (musicaDTO.getGenero() == null){
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    new ResultadoDTO()
-                            .setResultado(false)
-                            .setMensagem("Música não tem o gênero definido.")
-            );
-        }
+    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid MusicaDTO musicaDTO) {
         if (!generoService.contains(musicaDTO.getGenero().getNome())) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
                     new ResultadoDTO()
@@ -73,7 +47,7 @@ public class MusicaController {
             );
         }
         System.out.println("Nome da música: " + musicaDTO.getNome());
-        musicaDTOs.add(musicaDTO);
+        /** musicaDTOs.add(musicaDTO); */
         return ResponseEntity.ok(
                 new ResultadoDTO()
                 .setResultado(true)
@@ -90,13 +64,13 @@ public class MusicaController {
     @DeleteMapping
     public ResponseEntity<ResultadoDTO> deletar(@RequestParam String nome) {
         int removido = 0;
-        for (int i = musicaDTOs.size() - 1; i >= 0; i--){
+        /**for (int i = musicaDTOs.size() - 1; i >= 0; i--){
             MusicaDTO musicaDTO = musicaDTOs.get(i);
             if (musicaDTO.getNome().equalsIgnoreCase(nome)){
                 musicaDTOs.remove(i);
                 removido++;
             }
-        }
+        } */
         if (removido == 0){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResultadoDTO()

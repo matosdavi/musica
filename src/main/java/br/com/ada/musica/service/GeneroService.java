@@ -12,7 +12,7 @@ public class GeneroService {
 
     private List<GeneroDTO> generos = new ArrayList<>();
 
-    public List<GeneroDTO> lista() {
+    public List<GeneroDTO> listar() {
         return generos;
     }
 
