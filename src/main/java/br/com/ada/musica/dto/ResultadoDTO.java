@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/main/java/br/com/ada/musica/dto/ResultadoDTO.java
 package br.com.ada.musica.dto;
+=======
+package br.com.ada.maventeste.musica.dto;
+>>>>>>> origin/master:src/main/java/br/com/ada/maventeste/musica/dto/ResultadoDTO.java
 
 public class ResultadoDTO {
 
