@@ -1,9 +1,10 @@
 package br.com.ada.musica.controller;
 
-import br.com.ada.musica.dto.GeneroDTO;
+import br.com.ada.musica.dto.ArtistaDTO;
 import br.com.ada.musica.dto.ResultadoDTO;
-import br.com.ada.musica.service.GeneroService;
-import br.com.ada.musica.service.exception.GeneroNotFoundException;
+
+import br.com.ada.musica.service.ArtistaService;
+import br.com.ada.musica.service.exception.ArtistaNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,55 +12,56 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/genero")
-public class GeneroController extends BaseController {
+@RequestMapping("/artista")
+public class ArtistaController extends BaseController {
 
-    private GeneroService generoService;
+    private ArtistaService artistaService;
 
-    public GeneroController(GeneroService generoService) {
-        this.generoService = generoService;
+    public ArtistaController(ArtistaService artistaService) {
+        this.artistaService = artistaService;
     }
 
     @GetMapping("/listar")
-    public ResponseEntity<List<GeneroDTO>> listar() {
+    public ResponseEntity<List<ArtistaDTO>> listar() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(
-                        generoService.listar()
+                        artistaService.listar()
                 );
     }
 
     @PostMapping
-    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid GeneroDTO generoDTO) {
-        generoService.criar(generoDTO);
+    public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid ArtistaDTO artistaDTO) {
+        artistaService.criar(artistaDTO);
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
-                        .setMensagem("O gênero de música foi criado com sucesso.")
+                        .setMensagem("O artista foi criado com sucesso.")
         );
     }
 
     @PutMapping
     public ResponseEntity<ResultadoDTO> editar(
             @RequestParam(name = "nome") String nomeFilter,
-            @RequestBody GeneroDTO generoDTO
+            @RequestBody ArtistaDTO artistaDTO
     ) {
         try {
-            generoService.editar(nomeFilter, generoDTO);
-        } catch (GeneroNotFoundException ge) {
+            artistaService.editar(nomeFilter, artistaDTO);
+        } catch (ArtistaNotFoundException ae) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(
                             new ResultadoDTO()
                                     .setResultado(false)
-                                    .setMensagem(ge.getMessage())
+                                    .setMensagem(ae.getMessage())
                     );
         }
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
-                        .setMensagem("O gênero de música " + nomeFilter + "foi editado com sucesso.")
+                        .setMensagem("O artista " + nomeFilter + " foi editado com sucesso.")
         );
     }
 
@@ -67,20 +69,20 @@ public class GeneroController extends BaseController {
     public ResponseEntity<ResultadoDTO> deletar(
             @RequestParam(name = "nome") String nomeFilter
     ) {
-        boolean resultado = generoService.deletar(nomeFilter);
+        boolean resultado = artistaService.deletar(nomeFilter);
         if (resultado == false) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(
                             new ResultadoDTO()
                                     .setResultado(false)
-                                    .setMensagem("O gênero " + nomeFilter + " não foi encontrado.")
+                                    .setMensagem("O artista " + nomeFilter + " não foi encontrado.")
                     );
         }
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
-                        .setMensagem("O Gênero de música " + nomeFilter + " foi removido com sucesso.")
+                        .setMensagem("O artista " + nomeFilter + " foi removido com sucesso.")
         );
     }
 }
