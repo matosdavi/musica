@@ -1,53 +1,58 @@
 package br.com.ada.musica.service;
 
 import br.com.ada.musica.dto.ArtistaDTO;
+import br.com.ada.musica.dto.GeneroDTO;
+import br.com.ada.musica.model.Artista;
+import br.com.ada.musica.model.Genero;
+import br.com.ada.musica.repository.ArtistaRepository;
 import br.com.ada.musica.service.exception.ArtistaNotFoundException;
+import br.com.ada.musica.service.exception.GeneroNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ArtistaService {
-    private List<ArtistaDTO> artistas = new ArrayList<>();
+    @Autowired
+    private ArtistaRepository artistaRepository;
 
-    public List<ArtistaDTO> listar() {
-        return artistas;
+    public List<Artista> listar() {
+        return artistaRepository.findAll();
     }
 
-    public void criar(ArtistaDTO artistaDTO) {
-        artistas.add(artistaDTO);
+    public void criar(Artista artista) {
+        artista.setUid(UUID.randomUUID().toString());
+        artistaRepository.saveAndFlush(artista);
     }
 
-    public void editar(String nomeFilter, ArtistaDTO artistaDTO) throws ArtistaNotFoundException {
-        ArtistaDTO artistaEncontrado = getByNome(nomeFilter);
-        if (artistaEncontrado == null) {
-            throw new ArtistaNotFoundException("O gênero " + nomeFilter + " não foi encontrado.");
+    public void editar(String uid, Artista artista) throws ArtistaNotFoundException {
+        List<Artista> artistas = artistaRepository.findByUid(uid);
+        if (artistas.size() == 1) {
+            Artista artistaDB = artistas.get(0);
+            artistaDB.setNome(artista.getNome());
+        } else {
+            throw new ArtistaNotFoundException("O artista " + uid + " não foi encontrado.");
         }
-        artistaEncontrado.setNome(artistaDTO.getNome());
     }
 
-    public boolean deletar(String nomeFilter) {
-        ArtistaDTO artistaEncontrado = getByNome(nomeFilter);
-        if (artistaEncontrado == null) {
+    public boolean deletar(String uid) {
+        List<Artista> artistas = artistaRepository.findByUid(uid);
+        if (artistas.size() == 0) {
             return false;
         }
-        artistas.remove(artistaEncontrado);
+        Artista artista = artistas.get(0);
+        artistaRepository.delete(artista);
         return true;
     }
 
-    public ArtistaDTO getByNome(String nomeFilter) {
-        ArtistaDTO artistaEncontrado = null;
-        for (ArtistaDTO artistaLista : artistas) {
-            if (artistaLista.getNome().equalsIgnoreCase(nomeFilter)) {
-                artistaEncontrado = artistaLista;
-                break;
-            }
+    public Artista getByUid(String uid) {
+        List<Artista> artistas = artistaRepository.findByUid(uid);
+        if (artistas.size() == 1) {
+            return artistas.get(0);
         }
-        return artistaEncontrado;
-    }
-
-    public boolean contains(String nomeFilter) {
-        return getByNome(nomeFilter) != null;
+        return null;
     }
 }

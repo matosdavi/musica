@@ -1,6 +1,7 @@
 package br.com.ada.musica.controller;
 
 import br.com.ada.musica.dto.ArtistaDTO;
+import br.com.ada.musica.dto.FactoryDTO;
 import br.com.ada.musica.dto.ResultadoDTO;
 
 import br.com.ada.musica.service.ArtistaService;
@@ -27,14 +28,12 @@ public class ArtistaController extends BaseController {
     public ResponseEntity<List<ArtistaDTO>> listar() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(
-                        artistaService.listar()
-                );
+                .body(FactoryDTO.artistasToDTO(artistaService.listar()));
     }
 
     @PostMapping
     public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid ArtistaDTO artistaDTO) {
-        artistaService.criar(artistaDTO);
+        artistaService.criar(FactoryDTO.dtoToEntity(artistaDTO));
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
@@ -48,7 +47,7 @@ public class ArtistaController extends BaseController {
             @RequestBody ArtistaDTO artistaDTO
     ) {
         try {
-            artistaService.editar(nomeFilter, artistaDTO);
+            artistaService.editar(nomeFilter, FactoryDTO.dtoToEntity(artistaDTO));
         } catch (ArtistaNotFoundException ae) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

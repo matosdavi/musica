@@ -1,7 +1,9 @@
 package br.com.ada.musica.controller;
 
+import br.com.ada.musica.dto.FactoryDTO;
 import br.com.ada.musica.dto.MusicaDTO;
 import br.com.ada.musica.dto.ResultadoDTO;
+import br.com.ada.musica.service.ArtistaService;
 import br.com.ada.musica.service.GeneroService;
 import br.com.ada.musica.service.MusicaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,36 +20,28 @@ public class MusicaController extends BaseController {
 
     @Autowired
     private MusicaService musicaService;
-
     @Autowired
     private GeneroService generoService;
+    @Autowired
+    private ArtistaService artistaService;
 
     @GetMapping("/lista")
     public List<MusicaDTO> listar(@RequestParam String filter) {
         if (filter != null && !filter.isEmpty()) {
-            return musicaService.filterByName(filter);
+            //return musicaService.filterByName(filter);
         }
-        return musicaService.listar();
+        return FactoryDTO.musicasToDTO(musicaService.listar());
     }
 
     @GetMapping
-    public MusicaDTO detalhar(@RequestParam String nome){
-        return new MusicaDTO()
-                .setNome(nome)
-                .setArtista("trap");
+    public MusicaDTO detalhar(@RequestParam String nome) {
+        return MusicaDTO.builder().nome(nome).build();
         }
 
     @PostMapping
     public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid MusicaDTO musicaDTO) {
-        if (!generoService.contains(musicaDTO.getGenero().getNome())) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    new ResultadoDTO()
-                            .setResultado(false)
-                            .setMensagem("O Gênero " + musicaDTO.getGenero().getNome() + "não existe.")
-            );
-        }
         System.out.println("Nome da música: " + musicaDTO.getNome());
-        /** musicaDTOs.add(musicaDTO); */
+        musicaService.criar(FactoryDTO.dtoToEntity(musicaDTO));
         return ResponseEntity.ok(
                 new ResultadoDTO()
                 .setResultado(true)

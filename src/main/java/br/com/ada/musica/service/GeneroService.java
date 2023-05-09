@@ -1,54 +1,56 @@
 package br.com.ada.musica.service;
 
 import br.com.ada.musica.dto.GeneroDTO;
+import br.com.ada.musica.model.Genero;
+import br.com.ada.musica.repository.GeneroRepository;
 import br.com.ada.musica.service.exception.GeneroNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class GeneroService {
 
-    private List<GeneroDTO> generos = new ArrayList<>();
+    @Autowired
+    private GeneroRepository generoRepository;
 
-    public List<GeneroDTO> listar() {
-        return generos;
+    public List<Genero> listar() {
+        return generoRepository.findAll();
     }
 
-    public void criar(GeneroDTO generoDTO) {
-        generos.add(generoDTO);
+    public void criar(Genero genero) {
+       genero.setUid(UUID.randomUUID().toString());
+       generoRepository.saveAndFlush(genero);
     }
 
-    public void editar(String nomeFilter, GeneroDTO generoDTO) throws GeneroNotFoundException {
-        GeneroDTO generoEncontrado = getByNome(nomeFilter);
-        if (generoEncontrado == null) {
-            throw new GeneroNotFoundException("O gênero " + nomeFilter + " não foi encontrado.");
+    public void editar(String uid, Genero genero) throws GeneroNotFoundException {
+        List<Genero> generos = generoRepository.findByUid(uid);
+        if (generos.size() == 1) {
+            Genero generoDB = generos.get(0);
+            generoDB.setNome(genero.getNome());
+        } else {
+            throw new GeneroNotFoundException("O gênero " + uid + " não foi encontrado.");
         }
-        generoEncontrado.setNome(generoDTO.getNome());
     }
 
-    public boolean deletar(String nomeFilter) {
-        GeneroDTO generoEncontrado = getByNome(nomeFilter);
-        if (generoEncontrado == null) {
+    public boolean deletar(String uid) {
+        List<Genero> generos = generoRepository.findByUid(uid);
+        if (generos.size() == 0) {
             return false;
         }
-        generos.remove(generoEncontrado);
+        Genero genero = generos.get(0);
+        generoRepository.delete(genero);
         return true;
     }
 
-    public GeneroDTO getByNome(String nomeFilter) {
-        GeneroDTO generoEncontrado = null;
-        for (GeneroDTO generoLista : generos) {
-            if (generoLista.getNome().equalsIgnoreCase(nomeFilter)) {
-                generoEncontrado = generoLista;
-                break;
-            }
+    public Genero getByUid(String uid) {
+        List<Genero> generos = generoRepository.findByUid(uid);
+        if (generos.size() == 1) {
+            return generos.get(0);
         }
-        return generoEncontrado;
-    }
-
-    public boolean contains(String nomeFilter) {
-        return getByNome(nomeFilter) != null;
+        return null;
     }
 }

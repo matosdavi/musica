@@ -1,5 +1,6 @@
 package br.com.ada.musica.controller;
 
+import br.com.ada.musica.dto.FactoryDTO;
 import br.com.ada.musica.dto.GeneroDTO;
 import br.com.ada.musica.dto.ResultadoDTO;
 import br.com.ada.musica.service.GeneroService;
@@ -25,14 +26,12 @@ public class GeneroController extends BaseController {
     public ResponseEntity<List<GeneroDTO>> listar() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(
-                        generoService.listar()
-                );
+                .body(FactoryDTO.generosToDTO(generoService.listar()));
     }
 
     @PostMapping
     public ResponseEntity<ResultadoDTO> criar(@RequestBody @Valid GeneroDTO generoDTO) {
-        generoService.criar(generoDTO);
+        generoService.criar(FactoryDTO.dtoToEntity(generoDTO));
         return ResponseEntity.ok(
                 new ResultadoDTO()
                         .setResultado(true)
@@ -46,7 +45,7 @@ public class GeneroController extends BaseController {
             @RequestBody GeneroDTO generoDTO
     ) {
         try {
-            generoService.editar(nomeFilter, generoDTO);
+            generoService.editar(nomeFilter, FactoryDTO.dtoToEntity(generoDTO));
         } catch (GeneroNotFoundException ge) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
