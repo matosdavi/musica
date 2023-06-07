@@ -13,10 +13,11 @@ public class MusicaDTO {
 
     private String uid;
     @NotBlank(message = "O nome é obrigatório.")
-    @Length(min = 3, max = 250, message = "O nome da música tem que ter no mínimo 3 caracteres.")
     private String nome;
-    @NotBlank(message = "O nome é obrigatório.")
-    private String artista;
+    @NotBlank(message = "O artista é obrigatório.")
+    @Length(min = 3, max = 250, message = "O nome da música tem que ter no mínimo 3 caracteres.")
+    private ArtistaDTO artista;
     @NotNull(message = "O gênero da música é obrigatório.")
+    @Length(min = 3, max = 250, message = "O nome da música tem que ter no mínimo 3 caracteres.")
     private GeneroDTO genero;
 }

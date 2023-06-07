@@ -1,16 +1,11 @@
 package br.com.ada.musica.service;
 
-import br.com.ada.musica.dto.ArtistaDTO;
-import br.com.ada.musica.dto.GeneroDTO;
 import br.com.ada.musica.model.Artista;
-import br.com.ada.musica.model.Genero;
 import br.com.ada.musica.repository.ArtistaRepository;
 import br.com.ada.musica.service.exception.ArtistaNotFoundException;
-import br.com.ada.musica.service.exception.GeneroNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +28,7 @@ public class ArtistaService {
         if (artistas.size() == 1) {
             Artista artistaDB = artistas.get(0);
             artistaDB.setNome(artista.getNome());
+            artistaRepository.saveAndFlush(artistaDB);
         } else {
             throw new ArtistaNotFoundException("O artista " + uid + " não foi encontrado.");
         }

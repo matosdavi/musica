@@ -1,13 +1,11 @@
 package br.com.ada.musica.service;
 
-import br.com.ada.musica.dto.GeneroDTO;
 import br.com.ada.musica.model.Genero;
 import br.com.ada.musica.repository.GeneroRepository;
 import br.com.ada.musica.service.exception.GeneroNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +29,7 @@ public class GeneroService {
         if (generos.size() == 1) {
             Genero generoDB = generos.get(0);
             generoDB.setNome(genero.getNome());
+            generoRepository.saveAndFlush(generoDB);
         } else {
             throw new GeneroNotFoundException("O gênero " + uid + " não foi encontrado.");
         }

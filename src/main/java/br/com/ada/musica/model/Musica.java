@@ -14,7 +14,8 @@ public class Musica {
     private long id;
     private String uid;
     private String nome;
-    private String artista;
     @ManyToOne(fetch = FetchType.LAZY)
     private Genero genero;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Artista artista;
 }

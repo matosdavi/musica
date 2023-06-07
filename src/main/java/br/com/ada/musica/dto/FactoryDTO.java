@@ -75,7 +75,7 @@ public class FactoryDTO {
         return MusicaDTO.builder()
                 .uid(musica.getUid())
                 .nome(musica.getNome())
-                .artista(musica.getArtista())
+                .artista(entityToDTO(musica.getArtista()))
                 .genero(entityToDTO(musica.getGenero()))
                 .build();
     }
@@ -87,9 +87,10 @@ public class FactoryDTO {
         Musica musica = new Musica();
         musica.setUid(musicaDTO.getUid());
         musica.setNome(musicaDTO.getNome());
-        musica.setArtista(musicaDTO.getArtista());
         if (musicaDTO.getGenero() != null) {
             musica.setGenero(dtoToEntity(musicaDTO.getGenero()));
+        } if (musicaDTO.getArtista() != null) {
+            musica.setArtista(dtoToEntity(musicaDTO.getArtista()));
         }
         return musica;
     }

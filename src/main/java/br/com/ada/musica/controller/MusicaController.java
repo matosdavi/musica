@@ -25,10 +25,9 @@ public class MusicaController extends BaseController {
     @Autowired
     private ArtistaService artistaService;
 
-    @GetMapping("/lista")
+    @GetMapping("/listar")
     public List<MusicaDTO> listar(@RequestParam String filter) {
         if (filter != null && !filter.isEmpty()) {
-            //return musicaService.filterByName(filter);
         }
         return FactoryDTO.musicasToDTO(musicaService.listar());
     }
@@ -58,13 +57,6 @@ public class MusicaController extends BaseController {
     @DeleteMapping
     public ResponseEntity<ResultadoDTO> deletar(@RequestParam String nome) {
         int removido = 0;
-        /**for (int i = musicaDTOs.size() - 1; i >= 0; i--){
-            MusicaDTO musicaDTO = musicaDTOs.get(i);
-            if (musicaDTO.getNome().equalsIgnoreCase(nome)){
-                musicaDTOs.remove(i);
-                removido++;
-            }
-        } */
         if (removido == 0){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResultadoDTO()
